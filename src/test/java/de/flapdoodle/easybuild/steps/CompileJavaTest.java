@@ -21,7 +21,7 @@ class CompileJavaTest {
         var testee = new CompileJava();
 
         // das sind die Daten die der build step braucht
-        assertThat(testee.source().values())
+        assertThat(testee.sources())
             .containsExactlyInAnyOrder(
                 ArtefactId.ofType(ProjectBasePath.class),
                 ArtefactId.ofType(JavaSource.class)
@@ -55,7 +55,7 @@ class CompileJavaTest {
         var compileJava = new CompileJava();
         var testee = new CompileJavaTests();
 
-        assertThat(testee.source().values())
+        assertThat(testee.sources())
             .containsExactlyInAnyOrder(
                 ArtefactId.ofType(ProjectBasePath.class),
                 ArtefactId.ofType(ClassPath.class),

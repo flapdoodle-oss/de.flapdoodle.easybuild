@@ -1,18 +1,16 @@
 package de.flapdoodle.easybuild.steps;
 
 import de.flapdoodle.easybuild.core.ArtefactId;
-import de.flapdoodle.easybuild.core.ArtefactSet;
-import de.flapdoodle.easybuild.core.steps.Merge3;
-import de.flapdoodle.easybuild.core.steps.Merge4;
+import de.flapdoodle.easybuild.core.steps.With4;
 
 import java.nio.file.Path;
 
-public final class CompileJavaTests extends Merge4<ProjectBasePath, ClassPath, JavaTestSource, JavaClasses, JavaTestClasses> {
+public final class CompileJavaTests extends With4<ProjectBasePath, ClassPath, JavaTestSource, JavaClasses, JavaTestClasses> {
     public CompileJavaTests(
-        ArtefactSet.Quadruple<ProjectBasePath, ClassPath, JavaTestSource, JavaClasses> source,
+        ArtefactId<ProjectBasePath> a, ArtefactId<ClassPath> b, ArtefactId<JavaTestSource> c, ArtefactId<JavaClasses> d,
         ArtefactId<JavaTestClasses> destination
     ) {
-        super(source, destination, (projectBasePath, classPath, javaTestSource, javaClasses) -> {
+        super(a, b, c, d, destination, (projectBasePath, classPath, javaTestSource, javaClasses) -> {
             Path target = projectBasePath.path().resolve("target").resolve("testClasses");
             new Compiler(projectBasePath.path(), javaTestSource.path(), target)
                 .addClasses(javaClasses.path())
@@ -24,12 +22,10 @@ public final class CompileJavaTests extends Merge4<ProjectBasePath, ClassPath, J
 
     public CompileJavaTests() {
         this(
-            new ArtefactSet.Quadruple<>(
-                ArtefactId.ofType(ProjectBasePath.class),
-                ArtefactId.ofType(ClassPath.class),
-                ArtefactId.ofType(JavaTestSource.class),
-                ArtefactId.ofType(JavaClasses.class)
-            ),
+            ArtefactId.ofType(ProjectBasePath.class),
+            ArtefactId.ofType(ClassPath.class),
+            ArtefactId.ofType(JavaTestSource.class),
+            ArtefactId.ofType(JavaClasses.class),
             ArtefactId.ofType(JavaTestClasses.class)
         );
     }
