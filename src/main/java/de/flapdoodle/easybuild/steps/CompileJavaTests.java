@@ -12,10 +12,18 @@ public final class CompileJavaTests extends With4<ProjectBasePath, ClassPath, Ja
     ) {
         super(a, b, c, d, destination, (projectBasePath, classPath, javaTestSource, javaClasses) -> {
             Path target = projectBasePath.path().resolve("target").resolve("testClasses");
-            new Compiler(projectBasePath.path(), javaTestSource.path(), target)
+            Compiler.builder()
+                .basePath(projectBasePath.path())
+                .sources(javaTestSource.path())
+                .target(target)
                 .addClasses(javaClasses.path())
                 .addJars(classPath.paths())
+                .build()
                 .compile();
+//            new Compiler(projectBasePath.path(), javaTestSource.path(), target)
+//                .addClasses(javaClasses.path())
+//                .addJars(classPath.paths())
+//                .compile();
             return new JavaTestClasses(target);
         });
     }

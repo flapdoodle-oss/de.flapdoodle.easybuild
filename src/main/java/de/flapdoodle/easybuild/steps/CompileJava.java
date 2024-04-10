@@ -12,7 +12,12 @@ public final class CompileJava extends With2<ProjectBasePath, JavaSource, JavaCl
     ) {
         super(a, b, destination, (projectBasePath, javaSource) -> {
             Path target = projectBasePath.path().resolve("target").resolve("classes");
-            new Compiler(projectBasePath.path(), javaSource.path(), target).compile();
+            Compiler.builder()
+                .basePath(projectBasePath.path())
+                .sources(javaSource.path())
+                .target(target)
+                .build().compile();
+//            new Compiler(projectBasePath.path(), javaSource.path(), target).compile();
             return new JavaClasses(target);
         });
     }

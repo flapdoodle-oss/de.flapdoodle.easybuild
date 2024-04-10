@@ -4,7 +4,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -16,6 +18,13 @@ public record Compiler(
     List<Path> jars,
     List<Path> classes
 ) {
+    public Compiler {
+        Objects.requireNonNull(basePath,"basePath is null");
+        Objects.requireNonNull(sources,"sources is null");
+        Objects.requireNonNull(target,"target is null");
+        Objects.requireNonNull(jars,"jars is null");
+        Objects.requireNonNull(classes,"classes is null");
+    }
 
     public Compiler(Path basePath,
                     Path sources,
@@ -65,5 +74,61 @@ public record Compiler(
         return Stream.concat(classes.stream(), jars.stream())
             .map(it -> it.toAbsolutePath().toString())
             .collect(Collectors.joining(":"));
+    }
+
+    static class Builder {
+        private Path basePath;
+        private Path sources;
+        private Path target;
+        private List<Path> jars=new ArrayList<>();
+        private List<Path> classes=new ArrayList<>();
+
+        public Builder basePath(final Path basePath) {
+            this.basePath = basePath;
+            return this;
+        }
+
+        public Builder sources(final Path sources) {
+            this.sources = sources;
+            return this;
+        }
+
+        public Builder target(final Path target) {
+            this.target = target;
+            return this;
+        }
+
+        public Builder jars(final List<Path> jars) {
+            this.jars = jars;
+            return this;
+        }
+
+        public Builder addJar(final Path jar) {
+            this.jars.add(jar);
+            return this;
+        }
+
+        public Builder addJars(final List<Path> jars) {
+            this.jars.addAll(jars);
+            return this;
+        }
+
+        public Builder classes(final List<Path> jars) {
+            this.classes = classes;
+            return this;
+        }
+
+        public Builder addClasses(final Path classes) {
+            this.classes.add(classes);
+            return this;
+        }
+
+        public Compiler build() {
+            return new Compiler(basePath, sources, target, List.copyOf(jars), List.copyOf(classes));
+        }
+    }
+
+    public static Builder builder() {
+        return new Builder();
     }
 }
