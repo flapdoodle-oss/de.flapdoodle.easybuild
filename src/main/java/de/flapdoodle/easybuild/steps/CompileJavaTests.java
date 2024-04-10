@@ -10,7 +10,7 @@ import java.nio.file.Path;
 public final class CompileJavaTests extends Merge4<ProjectBasePath, ClassPath, JavaTestSource, JavaClasses, JavaTestClasses> {
     public CompileJavaTests(
         ArtefactSet.Quadruple<ProjectBasePath, ClassPath, JavaTestSource, JavaClasses> source,
-        ArtefactSet.Single<JavaTestClasses> destination
+        ArtefactId<JavaTestClasses> destination
     ) {
         super(source, destination, (projectBasePath, classPath, javaTestSource, javaClasses) -> {
             Path target = projectBasePath.path().resolve("target").resolve("testClasses");
@@ -30,9 +30,7 @@ public final class CompileJavaTests extends Merge4<ProjectBasePath, ClassPath, J
                 ArtefactId.ofType(JavaTestSource.class),
                 ArtefactId.ofType(JavaClasses.class)
             ),
-            new ArtefactSet.Single<>(
-                ArtefactId.ofType(JavaTestClasses.class)
-            )
+            ArtefactId.ofType(JavaTestClasses.class)
         );
     }
 }

@@ -13,15 +13,13 @@ public final class CompileJava extends Merge2<ProjectBasePath, JavaSource, JavaC
                 ArtefactId.ofType(ProjectBasePath.class),
                 ArtefactId.ofType(JavaSource.class)
             ),
-            new ArtefactSet.Single<>(
-                ArtefactId.ofType(JavaClasses.class)
-            )
+            ArtefactId.ofType(JavaClasses.class)
         );
     }
 
     public CompileJava(
         ArtefactSet.Tuple<ProjectBasePath, JavaSource> source,
-        ArtefactSet.Single<JavaClasses> destination
+        ArtefactId<JavaClasses> destination
     ) {
         super(source, destination, (projectBasePath, javaSource) -> {
             Path target = projectBasePath.path().resolve("target").resolve("classes");

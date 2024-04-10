@@ -1,5 +1,6 @@
 package de.flapdoodle.easybuild.core.steps;
 
+import de.flapdoodle.easybuild.core.ArtefactId;
 import de.flapdoodle.easybuild.core.ArtefactMap;
 import de.flapdoodle.easybuild.core.ArtefactSet;
 import de.flapdoodle.easybuild.core.BuildStep;
@@ -10,12 +11,12 @@ import java.util.function.Function;
 
 public abstract class Merge2<A, B, T> implements BuildStep {
     private final ArtefactSet.Tuple<A, B> source;
-    private final ArtefactSet.Single<T> destination;
+    private final ArtefactId<T> destination;
     private final BiFunction<A, B, T> _action;
 
     public Merge2(
         ArtefactSet.Tuple<A, B> source,
-        ArtefactSet.Single<T> destination,
+        ArtefactId<T> destination,
         BiFunction<A, B, T> _action
     ) {
         this.source = source;
@@ -24,10 +25,9 @@ public abstract class Merge2<A, B, T> implements BuildStep {
     }
 
     @Override
-    public Function<ArtefactMap, ArtefactMap> action() {
+    public Function<ArtefactMap, T> action() {
         return map -> {
-            var result = _action.apply(map.get(source.a()), map.get(source.b()));
-            return ArtefactMap.of(destination.a(), result);
+            return _action.apply(map.get(source.a()), map.get(source.b()));
         };
     }
 
@@ -37,7 +37,7 @@ public abstract class Merge2<A, B, T> implements BuildStep {
     }
 
     @Override
-    public ArtefactSet.Single<T> destination() {
+    public ArtefactId<T> destination() {
         return destination;
     }
 }

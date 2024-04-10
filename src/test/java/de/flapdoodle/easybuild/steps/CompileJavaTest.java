@@ -17,28 +17,35 @@ class CompileJavaTest {
 
     @Test
     void compileSampleProject(@TempDir Path target) {
+        // das ist alles was ein build step definieren muss
         var testee = new CompileJava();
 
+        // das sind die Daten die der build step braucht
         assertThat(testee.source().values())
             .containsExactlyInAnyOrder(
                 ArtefactId.ofType(ProjectBasePath.class),
                 ArtefactId.ofType(JavaSource.class)
             );
 
-        assertThat(testee.destination().values())
-            .containsExactly(ArtefactId.ofType(JavaClasses.class));
+        // das ist das was der build step erzeugt
+        assertThat(testee.destination())
+            .isEqualTo(ArtefactId.ofType(JavaClasses.class));
 
+        // zwei Klassen, eine davon ein Test, Standardverzeichnislayout
         var sampleProjectBase = SampleProject.basePath();
 
+        // sowas würde automatisch von der z.B. graph basierten abhängigkeitsanalyse befüllt
+        // darum muss sich der build step nicht kümmern
         var sourcesMap = ArtefactMap.of(
             ArtefactId.ofType(ProjectBasePath.class), new ProjectBasePath(target),
             ArtefactId.ofType(JavaSource.class), new JavaSource(sampleProjectBase.resolve("src/main/java")
         ));
 
-        ArtefactMap result = testee.action().apply(sourcesMap);
+        // hier würde der build step ausgeführt werden, alles was er braucht bekommt er, auf mehr hat er keinen
+        // zugriff
+        var classes = testee.action().apply(sourcesMap);
 
-        var classes = result.get(ArtefactId.ofType(JavaClasses.class));
-        
+        // prüfe, ob er wirklich den javac erfolgreich angeworfen hat
         assertThat(classes.path())
             .isDirectoryRecursivelyContaining(it -> it.getFileName().toString().equals("HelloWorld.class"));
     }
@@ -56,8 +63,8 @@ class CompileJavaTest {
                 ArtefactId.ofType(JavaTestSource.class)
             );
 
-        assertThat(testee.destination().values())
-            .containsExactly(ArtefactId.ofType(JavaTestClasses.class));
+        assertThat(testee.destination())
+            .isEqualTo(ArtefactId.ofType(JavaTestClasses.class));
 
         var sampleProjectBase = SampleProject.basePath();
 
@@ -66,9 +73,7 @@ class CompileJavaTest {
             ArtefactId.ofType(JavaSource.class), new JavaSource(sampleProjectBase.resolve("src/main/java")
         ));
 
-        ArtefactMap result = compileJava.action().apply(sourcesMap);
-
-        var classes = result.get(ArtefactId.ofType(JavaClasses.class));
+        var classes = compileJava.action().apply(sourcesMap);
 
         assertThat(classes.path())
             .isDirectoryRecursivelyContaining(it -> it.getFileName().toString().equals("HelloWorld.class"));
@@ -78,7 +83,9 @@ class CompileJavaTest {
         var cp = new ClassPath(Arrays.stream(classPathFromRuntime.split(":")).map(it -> Paths.get(it)).toList());
 
         var testSourcesMap = sourcesMap
-            .or(result)
+            .or(ArtefactMap.of(
+                ArtefactId.ofType(JavaClasses.class), classes
+            ))
             .or(ArtefactMap.of(
                 ArtefactId.ofType(JavaTestSource.class), new JavaTestSource(sampleProjectBase.resolve("src/test/java"))
             ))
@@ -86,9 +93,7 @@ class CompileJavaTest {
                 ArtefactId.ofType(ClassPath.class), cp)
             );
 
-        ArtefactMap testResult = testee.action().apply(testSourcesMap);
-
-        var testClasses = testResult.get(ArtefactId.ofType(JavaTestClasses.class));
+        var testClasses = testee.action().apply(testSourcesMap);
 
         assertThat(testClasses.path())
             .isDirectoryRecursivelyContaining(it -> it.getFileName().toString().equals("HelloWorldTest.class"));

@@ -1,14 +1,12 @@
 package de.flapdoodle.easybuild.core;
 
-import java.util.Map;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 
-public interface BuildStep {
+public interface BuildStep<T> {
     ArtefactSet source();
 
-    ArtefactSet destination();
+    ArtefactId<T> destination();
 
-    Function<ArtefactMap, ArtefactMap> action();
+    Function<ArtefactMap, T> action();
 
 }

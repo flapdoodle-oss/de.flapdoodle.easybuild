@@ -1,5 +1,6 @@
 package de.flapdoodle.easybuild.core.steps;
 
+import de.flapdoodle.easybuild.core.ArtefactId;
 import de.flapdoodle.easybuild.core.ArtefactMap;
 import de.flapdoodle.easybuild.core.ArtefactSet;
 import de.flapdoodle.easybuild.core.BuildStep;
@@ -8,14 +9,14 @@ import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-public abstract class Merge3<A, B, C, T> implements BuildStep {
+public abstract class Merge3<A, B, C, T> implements BuildStep<T> {
 	private final ArtefactSet.Triple<A, B, C> source;
-	private final ArtefactSet.Single<T> destination;
+	private final ArtefactId<T> destination;
 	private final Merge3.Action<A, B, C, T> _action;
 
 	public Merge3(
 		ArtefactSet.Triple<A, B, C> source,
-		ArtefactSet.Single<T> destination,
+		ArtefactId<T> destination,
         Merge3.Action<A, B, C, T> _action
 	) {
 		this.source = source;
@@ -24,10 +25,10 @@ public abstract class Merge3<A, B, C, T> implements BuildStep {
 	}
 
 	@Override
-	public Function<ArtefactMap, ArtefactMap> action() {
+	public Function<ArtefactMap, T> action() {
 		return map -> {
 			var result = _action.apply(map.get(source.a()), map.get(source.b()), map.get(source.c()));
-			return ArtefactMap.of(destination.a(), result);
+			return result;
 		};
 	}
 
@@ -37,7 +38,7 @@ public abstract class Merge3<A, B, C, T> implements BuildStep {
 	}
 
 	@Override
-	public ArtefactSet.Single<T> destination() {
+	public ArtefactId<T> destination() {
 		return destination;
 	}
 
