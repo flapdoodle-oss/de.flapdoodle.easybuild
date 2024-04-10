@@ -7,16 +7,6 @@ import de.flapdoodle.easybuild.core.steps.Merge2;
 import java.nio.file.Path;
 
 public final class CompileJava extends Merge2<ProjectBasePath, JavaSource, JavaClasses> {
-    public CompileJava() {
-        this(
-            new ArtefactSet.Tuple<>(
-                ArtefactId.ofType(ProjectBasePath.class),
-                ArtefactId.ofType(JavaSource.class)
-            ),
-            ArtefactId.ofType(JavaClasses.class)
-        );
-    }
-
     public CompileJava(
         ArtefactSet.Tuple<ProjectBasePath, JavaSource> source,
         ArtefactId<JavaClasses> destination
@@ -27,4 +17,15 @@ public final class CompileJava extends Merge2<ProjectBasePath, JavaSource, JavaC
             return new JavaClasses(target);
         });
     }
+
+    public CompileJava() {
+        this(
+            new ArtefactSet.Tuple<>(
+                ArtefactId.ofType(ProjectBasePath.class),
+                ArtefactId.ofType(JavaSource.class)
+            ),
+            ArtefactId.ofType(JavaClasses.class)
+        );
+    }
+
 }
