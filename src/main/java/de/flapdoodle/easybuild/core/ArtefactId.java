@@ -1,4 +1,4 @@
-package de.flapdoodle.easybuild.steps;
+package de.flapdoodle.easybuild.core;
 
 public interface ArtefactId<T> {
     record ClassId<T>(Class<T> type) implements ArtefactId<T> {

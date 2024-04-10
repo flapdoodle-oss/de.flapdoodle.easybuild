@@ -7,12 +7,25 @@ import java.nio.file.StandardOpenOption;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public record Compiler(
     Path basePath,
     Path sources,
-    Path target
+    Path target,
+    List<Path> jars,
+    List<Path> classes
 ) {
+
+    public Compiler(Path basePath,
+                    Path sources,
+                    Path target) {
+        this(basePath,sources,target,List.of(), List.of());
+    }
+
+    public Compiler addClasses(Path otherClasses) {
+        return new Compiler(basePath, sources, target, jars, Stream.concat(classes.stream(), Stream.of(otherClasses)).toList());
+    }
 
     boolean compile() {
         try {

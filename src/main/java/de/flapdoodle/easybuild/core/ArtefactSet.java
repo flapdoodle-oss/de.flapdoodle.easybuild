@@ -1,4 +1,4 @@
-package de.flapdoodle.easybuild.steps;
+package de.flapdoodle.easybuild.core;
 
 import java.util.Set;
 
@@ -13,11 +13,19 @@ public sealed interface ArtefactSet {
         }
     }
 
-    record Double<A, B>(ArtefactId<A> a, ArtefactId<B> b) implements ArtefactSet {
+    record Tuple<A, B>(ArtefactId<A> a, ArtefactId<B> b) implements ArtefactSet {
 
         @Override
         public Set<ArtefactId<?>> values() {
             return Set.of(a, b);
+        }
+    }
+
+    record Triple<A, B, C>(ArtefactId<A> a, ArtefactId<B> b, ArtefactId<C> c) implements ArtefactSet {
+
+        @Override
+        public Set<ArtefactId<?>> values() {
+            return Set.of(a, b, c);
         }
     }
 }

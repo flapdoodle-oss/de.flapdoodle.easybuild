@@ -1,11 +1,15 @@
 package de.flapdoodle.easybuild.steps;
 
+import de.flapdoodle.easybuild.core.ArtefactId;
+import de.flapdoodle.easybuild.core.ArtefactSet;
+import de.flapdoodle.easybuild.core.steps.Merge2;
+
 import java.nio.file.Path;
 
-public final class CompileJava extends BuildStep.Merge<ProjectBasePath, JavaSource, JavaClasses> {
+public final class CompileJava extends Merge2<ProjectBasePath, JavaSource, JavaClasses> {
     public CompileJava() {
         this(
-            new ArtefactSet.Double<>(
+            new ArtefactSet.Tuple<>(
                 ArtefactId.ofType(ProjectBasePath.class),
                 ArtefactId.ofType(JavaSource.class)
             ),
@@ -16,7 +20,7 @@ public final class CompileJava extends BuildStep.Merge<ProjectBasePath, JavaSour
     }
 
     public CompileJava(
-        ArtefactSet.Double<ProjectBasePath, JavaSource> source,
+        ArtefactSet.Tuple<ProjectBasePath, JavaSource> source,
         ArtefactSet.Single<JavaClasses> destination
     ) {
         super(source, destination, (projectBasePath, javaSource) -> {
