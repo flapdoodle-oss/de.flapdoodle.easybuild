@@ -8,7 +8,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 import java.nio.file.Path;
-import java.util.Map;
+import java.nio.file.Paths;
+import java.util.Arrays;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -29,9 +30,9 @@ class CompileJavaTest {
 
         var sampleProjectBase = SampleProject.basePath();
 
-        var sourcesMap = ArtefactMap.with(Map.of(
+        var sourcesMap = ArtefactMap.of(
             ArtefactId.ofType(ProjectBasePath.class), new ProjectBasePath(target),
-            ArtefactId.ofType(JavaSource.class), new JavaSource(sampleProjectBase.resolve("src/main/java"))
+            ArtefactId.ofType(JavaSource.class), new JavaSource(sampleProjectBase.resolve("src/main/java")
         ));
 
         ArtefactMap result = testee.action().apply(sourcesMap);
@@ -43,8 +44,6 @@ class CompileJavaTest {
     }
 
     @Test
-    @Disabled()
-    // TODO da fehlt natürlich die junit dependency im classpath
     void compileSampleProjectAndTests(@TempDir Path target) {
         var compileJava = new CompileJava();
         var testee = new CompileJavaTests();
@@ -52,6 +51,7 @@ class CompileJavaTest {
         assertThat(testee.source().values())
             .containsExactlyInAnyOrder(
                 ArtefactId.ofType(ProjectBasePath.class),
+                ArtefactId.ofType(ClassPath.class),
                 ArtefactId.ofType(JavaClasses.class),
                 ArtefactId.ofType(JavaTestSource.class)
             );
@@ -61,9 +61,9 @@ class CompileJavaTest {
 
         var sampleProjectBase = SampleProject.basePath();
 
-        var sourcesMap = ArtefactMap.with(Map.of(
+        var sourcesMap = ArtefactMap.of(
             ArtefactId.ofType(ProjectBasePath.class), new ProjectBasePath(target),
-            ArtefactId.ofType(JavaSource.class), new JavaSource(sampleProjectBase.resolve("src/main/java"))
+            ArtefactId.ofType(JavaSource.class), new JavaSource(sampleProjectBase.resolve("src/main/java")
         ));
 
         ArtefactMap result = compileJava.action().apply(sourcesMap);
@@ -73,11 +73,18 @@ class CompileJavaTest {
         assertThat(classes.path())
             .isDirectoryRecursivelyContaining(it -> it.getFileName().toString().equals("HelloWorld.class"));
 
+        // TODO hack
+        String classPathFromRuntime = System.getProperty("java.class.path");
+        var cp = new ClassPath(Arrays.stream(classPathFromRuntime.split(":")).map(it -> Paths.get(it)).toList());
+
         var testSourcesMap = sourcesMap
             .or(result)
-            .or(ArtefactMap.with(Map.of(
+            .or(ArtefactMap.of(
                 ArtefactId.ofType(JavaTestSource.class), new JavaTestSource(sampleProjectBase.resolve("src/test/java"))
-            )));
+            ))
+            .or(ArtefactMap.of(
+                ArtefactId.ofType(ClassPath.class), cp)
+            );
 
         ArtefactMap testResult = testee.action().apply(testSourcesMap);
 

@@ -28,4 +28,12 @@ public sealed interface ArtefactSet {
             return Set.of(a, b, c);
         }
     }
+
+    record Quadruple<A, B, C, D>(ArtefactId<A> a, ArtefactId<B> b, ArtefactId<C> c, ArtefactId<D> d) implements ArtefactSet {
+
+        @Override
+        public Set<ArtefactId<?>> values() {
+            return Set.of(a, b, c, d);
+        }
+    }
 }

@@ -6,6 +6,6 @@ class HelloWorldTest {
 
     @Test
     void noop() {
-        
+        HelloWorld.main(new String[0]);
     }
 }

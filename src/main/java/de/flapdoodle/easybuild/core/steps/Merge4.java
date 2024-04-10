@@ -4,19 +4,17 @@ import de.flapdoodle.easybuild.core.ArtefactMap;
 import de.flapdoodle.easybuild.core.ArtefactSet;
 import de.flapdoodle.easybuild.core.BuildStep;
 
-import java.util.Map;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 
-public abstract class Merge3<A, B, C, T> implements BuildStep {
-	private final ArtefactSet.Triple<A, B, C> source;
+public abstract class Merge4<A, B, C, D, T> implements BuildStep {
+	private final ArtefactSet.Quadruple<A, B, C, D> source;
 	private final ArtefactSet.Single<T> destination;
-	private final Merge3.Action<A, B, C, T> _action;
+	private final Merge4.Action<A, B, C, D, T> _action;
 
-	public Merge3(
-		ArtefactSet.Triple<A, B, C> source,
+	public Merge4(
+		ArtefactSet.Quadruple<A, B, C, D> source,
 		ArtefactSet.Single<T> destination,
-        Merge3.Action<A, B, C, T> _action
+        Merge4.Action<A, B, C, D, T> _action
 	) {
 		this.source = source;
 		this.destination = destination;
@@ -26,13 +24,13 @@ public abstract class Merge3<A, B, C, T> implements BuildStep {
 	@Override
 	public Function<ArtefactMap, ArtefactMap> action() {
 		return map -> {
-			var result = _action.apply(map.get(source.a()), map.get(source.b()), map.get(source.c()));
+			var result = _action.apply(map.get(source.a()), map.get(source.b()), map.get(source.c()), map.get(source.d()));
 			return ArtefactMap.of(destination.a(), result);
 		};
 	}
 
 	@Override
-	public ArtefactSet.Triple<A, B, C> source() {
+	public ArtefactSet.Quadruple<A, B, C, D> source() {
 		return source;
 	}
 
@@ -42,7 +40,7 @@ public abstract class Merge3<A, B, C, T> implements BuildStep {
 	}
 
     @FunctionalInterface
-    public interface Action<A,B,C,T> {
-        T apply(A a, B b, C c);
+    public interface Action<A,B,C,D,T> {
+        T apply(A a, B b, C c, D d);
     }
 }

@@ -20,11 +20,15 @@ public record Compiler(
     public Compiler(Path basePath,
                     Path sources,
                     Path target) {
-        this(basePath,sources,target,List.of(), List.of());
+        this(basePath, sources, target, List.of(), List.of());
     }
 
     public Compiler addClasses(Path otherClasses) {
         return new Compiler(basePath, sources, target, jars, Stream.concat(classes.stream(), Stream.of(otherClasses)).toList());
+    }
+
+    public Compiler addJars(List<Path> otherJars) {
+        return new Compiler(basePath, sources, target, Stream.concat(jars.stream(), otherJars.stream()).toList(), classes);
     }
 
     boolean compile() {
@@ -39,7 +43,11 @@ public record Compiler(
             }
             var javaSourceList = Files.write(target.resolve("allSources.txt"), sourceFiles, StandardOpenOption.CREATE);
 
-            var process = new ProcessBuilder("javac", "-d", classesPath.toAbsolutePath().toString(), "@"+ javaSourceList)
+            var process = new ProcessBuilder("javac",
+                "-d", classesPath.toAbsolutePath().toString(),
+                "-cp", asClassPath(classes, jars),
+                "@" + javaSourceList
+            )
                 .directory(basePath.toFile())
                 .inheritIO()
                 .start();
@@ -48,9 +56,14 @@ public record Compiler(
             return true;
         } catch (IOException e) {
             throw new RuntimeException(e);
-        }
-        catch (InterruptedException e) {
+        } catch (InterruptedException e) {
             throw new RuntimeException("execution interrupted: ", e);
         }
+    }
+
+    private String asClassPath(List<Path> classes, List<Path> jars) {
+        return Stream.concat(classes.stream(), jars.stream())
+            .map(it -> it.toAbsolutePath().toString())
+            .collect(Collectors.joining(":"));
     }
 }

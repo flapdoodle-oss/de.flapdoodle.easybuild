@@ -26,7 +26,7 @@ public abstract class Direct<A, T> implements BuildStep {
     public Function<ArtefactMap, ArtefactMap> action() {
         return map -> {
             var result = _action.apply(map.get(source.a()));
-            return ArtefactMap.with(Map.of(destination, result));
+            return ArtefactMap.of(destination.a(), result);
         };
     }
 

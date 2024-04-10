@@ -27,7 +27,7 @@ public abstract class Merge2<A, B, T> implements BuildStep {
     public Function<ArtefactMap, ArtefactMap> action() {
         return map -> {
             var result = _action.apply(map.get(source.a()), map.get(source.b()));
-            return ArtefactMap.with(Map.of(destination.a(), result));
+            return ArtefactMap.of(destination.a(), result);
         };
     }
 
