@@ -21,7 +21,7 @@ class CompileJavaSourcesTest {
             .isDirectoryRecursivelyContaining(it -> it.getFileName().toString().equals("HelloWorld.class"));
     }
 
-    private static Path sampleProjectBasePath() {
+    static Path sampleProjectBasePath() {
         URL readMeAsResource = CompileJavaSourcesTest.class.getResource("/sample-project/README.md");
         assertThat(readMeAsResource).isNotNull();
         assertThat(readMeAsResource.getProtocol()).isEqualTo("file");
