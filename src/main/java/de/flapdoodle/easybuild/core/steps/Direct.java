@@ -22,10 +22,7 @@ public abstract class Direct<A, T> implements BuildStep<T> {
 
     @Override
     public Function<ArtefactMap, T> action() {
-        return map -> {
-            var result = _action.apply(map.get(source.a()));
-            return result;
-        };
+        return map -> _action.apply(map.get(source.a()));
     }
 
     @Override

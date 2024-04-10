@@ -24,9 +24,7 @@ public abstract class Merge4<A, B, C, D, T> implements BuildStep<T> {
 
 	@Override
 	public Function<ArtefactMap, T> action() {
-		return map -> {
-			return _action.apply(map.get(source.a()), map.get(source.b()), map.get(source.c()), map.get(source.d()));
-		};
+		return map -> _action.apply(map.get(source.a()), map.get(source.b()), map.get(source.c()), map.get(source.d()));
 	}
 
 	@Override
