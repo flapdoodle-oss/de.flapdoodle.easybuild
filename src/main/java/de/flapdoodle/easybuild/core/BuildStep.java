@@ -6,8 +6,8 @@ import java.util.function.Function;
 public interface BuildStep<T> {
     Set<ArtefactId<?>> sources();
 
-    ArtefactId<T> destination();
-
     Function<ArtefactMap, T> action();
+
+    ArtefactId<T> destination();
 
 }
