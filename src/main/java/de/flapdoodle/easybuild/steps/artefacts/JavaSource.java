@@ -1,4 +1,4 @@
-package de.flapdoodle.easybuild.steps;
+package de.flapdoodle.easybuild.steps.artefacts;
 
 import java.nio.file.Path;
 

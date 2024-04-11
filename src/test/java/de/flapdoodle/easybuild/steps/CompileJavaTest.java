@@ -3,7 +3,7 @@ package de.flapdoodle.easybuild.steps;
 import de.flapdoodle.easybuild.SampleProject;
 import de.flapdoodle.easybuild.core.ArtefactId;
 import de.flapdoodle.easybuild.core.ArtefactMap;
-import org.junit.jupiter.api.Disabled;
+import de.flapdoodle.easybuild.steps.artefacts.*;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 

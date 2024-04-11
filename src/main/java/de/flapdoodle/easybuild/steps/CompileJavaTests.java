@@ -1,7 +1,9 @@
 package de.flapdoodle.easybuild.steps;
 
 import de.flapdoodle.easybuild.core.ArtefactId;
+import de.flapdoodle.easybuild.core.api.Javac;
 import de.flapdoodle.easybuild.core.steps.With4;
+import de.flapdoodle.easybuild.steps.artefacts.*;
 
 import java.nio.file.Path;
 
@@ -12,7 +14,7 @@ public final class CompileJavaTests extends With4<ProjectBasePath, ClassPath, Ja
     ) {
         super(a, b, c, d, destination, (projectBasePath, classPath, javaTestSource, javaClasses) -> {
             Path target = projectBasePath.path().resolve("target").resolve("testClasses");
-            Compiler.builder()
+            Javac.builder()
                 .basePath(projectBasePath.path())
                 .sources(javaTestSource.path())
                 .target(target)
@@ -20,10 +22,6 @@ public final class CompileJavaTests extends With4<ProjectBasePath, ClassPath, Ja
                 .addJars(classPath.paths())
                 .build()
                 .compile();
-//            new Compiler(projectBasePath.path(), javaTestSource.path(), target)
-//                .addClasses(javaClasses.path())
-//                .addJars(classPath.paths())
-//                .compile();
             return new JavaTestClasses(target);
         });
     }

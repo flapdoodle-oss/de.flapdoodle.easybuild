@@ -1,4 +1,4 @@
-package de.flapdoodle.easybuild.steps;
+package de.flapdoodle.easybuild.core.api;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -11,14 +11,14 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public record Compiler(
+public record Javac(
     Path basePath,
     Path sources,
     Path target,
     List<Path> jars,
     List<Path> classes
 ) {
-    public Compiler {
+    public Javac {
         Objects.requireNonNull(basePath,"basePath is null");
         Objects.requireNonNull(sources,"sources is null");
         Objects.requireNonNull(target,"target is null");
@@ -26,21 +26,7 @@ public record Compiler(
         Objects.requireNonNull(classes,"classes is null");
     }
 
-    public Compiler(Path basePath,
-                    Path sources,
-                    Path target) {
-        this(basePath, sources, target, List.of(), List.of());
-    }
-
-    public Compiler addClasses(Path otherClasses) {
-        return new Compiler(basePath, sources, target, jars, Stream.concat(classes.stream(), Stream.of(otherClasses)).toList());
-    }
-
-    public Compiler addJars(List<Path> otherJars) {
-        return new Compiler(basePath, sources, target, Stream.concat(jars.stream(), otherJars.stream()).toList(), classes);
-    }
-
-    boolean compile() {
+    public boolean compile() {
         try {
             Path classesPath = Files.createDirectories(target);
             List<String> sourceFiles;
@@ -76,7 +62,7 @@ public record Compiler(
             .collect(Collectors.joining(":"));
     }
 
-    static class Builder {
+    public static class Builder {
         private Path basePath;
         private Path sources;
         private Path target;
@@ -123,8 +109,8 @@ public record Compiler(
             return this;
         }
 
-        public Compiler build() {
-            return new Compiler(basePath, sources, target, List.copyOf(jars), List.copyOf(classes));
+        public Javac build() {
+            return new Javac(basePath, sources, target, List.copyOf(jars), List.copyOf(classes));
         }
     }
 
